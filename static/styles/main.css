@@ -1,0 +1,64 @@
+/*-------ALL PAGE--------------*/
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background: linear-gradient(to bottom, #F6EFD2, #CEAD78);
+}
+/*-------END ALL PAGE--------------*/
+
+/*------------HEADER----------------*/
+.headers {
+    text-align: center;
+    padding: 5px;
+    margin-top: 3em;
+    /*border: 3px solid red;*/
+}
+/*------------END HEADER----------------*/
+
+/*---------PROJECT----------*/
+.project {
+    /*border: 3px solid blue;*/
+    width: 65%;
+    margin: 2em auto;
+}
+
+.project-title {
+    padding: 1em;
+    background: #565fcd;
+    /*border: 3px solid black;*/
+}
+
+.project-title span {
+    margin-left: 1em;
+    font-size: 1.5em;
+}
+
+.vl {
+  border-left: 3px solid grey;
+  height: 2em;
+}
+
+.icons-update-delete {
+    float: right;
+    position: relative;
+    margin-bottom: 10px;
+    /*border: 3px solid green;*/
+}
+
+.icon {
+    float: right;
+    margin: 10px;
+}
+
+.input-project {
+    background: gray;
+    width: 100%;
+}
+
+/*---------END PROJECT----------*/
