@@ -8,7 +8,8 @@ body {
     margin: 0;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    background: linear-gradient(to bottom, #F6EFD2, #CEAD78);
+    background: rgb(170, 78, 22);
+    background: linear-gradient(0deg, rgba(170, 78, 22, 1) 5%, rgba(208, 91, 28, 1) 17%, rgba(196, 81, 14, 1) 48%, rgba(186, 133, 99, 1) 63%, rgba(178, 184, 177, 1) 86%, rgba(212, 201, 201, 1) 100%);
 }
 /*-------END ALL PAGE--------------*/
 
@@ -17,48 +18,17 @@ body {
     text-align: center;
     padding: 5px;
     margin-top: 3em;
-    /*border: 3px solid red;*/
 }
 /*------------END HEADER----------------*/
 
 /*---------PROJECT----------*/
-.project {
-    /*border: 3px solid blue;*/
-    width: 65%;
-    margin: 2em auto;
-}
-
-.project-title {
-    padding: 1em;
-    background: #565fcd;
-    /*border: 3px solid black;*/
-}
-
-.project-title span {
-    margin-left: 1em;
-    font-size: 1.5em;
-}
-
 .vl {
   border-left: 3px solid grey;
   height: 2em;
-}
-
-.icons-update-delete {
-    float: right;
-    position: relative;
-    margin-bottom: 10px;
-    /*border: 3px solid green;*/
 }
 
 .icon {
     float: right;
     margin: 10px;
 }
-
-.input-project {
-    background: gray;
-    width: 100%;
-}
-
 /*---------END PROJECT----------*/

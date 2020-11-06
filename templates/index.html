@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
-{% block styles %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/main.css') }}" />
+{% block title %}
+    TODO LIST
 {% endblock %}
-
 
 {% block content %}
     <div class="headers">
         <h1>SIMPLE TODO LISTS</h1>
         <p>FROM RUBY GARAGE</p>
     </div>
+
     {% include 'projects.html' %}
 {% endblock %}
