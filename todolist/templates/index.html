@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    TODO LIST
+{% endblock %}
+
+{% block content %}
+    <div class="headers">
+        <h1>SIMPLE TODO LISTS</h1>
+        <p>FROM RUBY GARAGE</p>
+    </div>
+
+    {% include 'projects.html' %}
+
+    <!-- Button trigger modal -->
+    <div class="text-center">
+        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#exampleModalCenter">
+            Add project
+        </button>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Add project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="/add_project" method="post">
+                    <div class="modal-body">
+                        <div class="row">
+                            <!-- Input line -->
+                            <div class="col-md-10">
+                                <label for="project" class="sr-only">Project</label>
+                                <input type="text" class="form-control" name="project"
+                                       placeholder="Start typing here to create a project...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-2">
+        <p>&copy; Dmytro Zelenyi, 2020</p>
+    </div>
+{% endblock %}

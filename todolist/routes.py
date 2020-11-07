@@ -1,21 +1,20 @@
-import os
+from flask import render_template, request, redirect, url_for
 
-from flask import Flask, render_template, url_for
+from todolist.models import Project, Task
+
+from todolist import app, db
 
 
-# Init app
-app = Flask(__name__)
-
-projects = [
-    {
-        'id': 1,
-        'name': 'Complete the test task for Ruby Garage',
-    },
-    {
-        'id': 2,
-        'name': 'For Home',
-    },
-]
+# projects = [
+#     {
+#         'id': 1,
+#         'name': 'Complete the test task for Ruby Garage',
+#     },
+#     {
+#         'id': 2,
+#         'name': 'For Home',
+#     },
+# ]
 
 tasks = [
     {
@@ -78,26 +77,24 @@ tasks = [
 
 
 @app.route('/')
-def hello_world():
+def index():
+    """
+    Render start page
+
+    :return: start page
+    """
+    projects = Project.query.all()
     return render_template('index.html', projects=projects, tasks=tasks)
 
 
-# Next two function to sent to static file additional param and render html files with css (Don't touch!)
-@app.context_processor
-def override_url_for():
-    return dict(url_for=dated_url_for)
+@app.route('/add_project', methods=['POST'])
+def add_project():
+    name = request.form.get('project')
+    new_project = Project(name=name)
+    db.session.add(new_project)
+    db.session.commit()
+    return redirect(url_for('index'))
 
 
-def dated_url_for(endpoint, **values):
-    if endpoint == 'static':
-        filename = values.get('filename', None)
-        if filename:
-            file_path = os.path.join(app.root_path,
-                                     endpoint, filename)
-            values['q'] = int(os.stat(file_path).st_mtime)
-    return url_for(endpoint, **values)
-
-
-# Run server
-if __name__ == '__main__':
-    app.run()
+def edit():
+    pass
