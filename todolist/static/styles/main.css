@@ -31,7 +31,15 @@ body {
     float: right;
     margin: 10px;
 }
-/*---------END PROJECT----------*/
+
+a .icon {
+    color: black;
+}
+
+a .icon:hover {
+    color: gray;
+}
+
 
 .mouse_over {
     background: #f8f8ea;
@@ -44,3 +52,6 @@ body {
 .tools {
     visibility: hidden;
 }
+/*---------END PROJECT----------*/
+
+
