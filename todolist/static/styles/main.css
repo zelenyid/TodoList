@@ -32,3 +32,15 @@ body {
     margin: 10px;
 }
 /*---------END PROJECT----------*/
+
+.mouse_over {
+    background: #f8f8ea;
+}
+
+.mouse_over:hover {
+    background: #d5d365;
+}
+
+.tools {
+    visibility: hidden;
+}
