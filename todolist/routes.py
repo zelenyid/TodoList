@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import render_template, request, redirect, url_for
 
 from todolist.models import Project, Task
@@ -12,7 +13,6 @@ def index():
     :return: start page
     """
     projects = Project.query.all()
-    tasks = Task.query.all()
     return render_template('index.html', projects=projects, tasks=Task)
 
 
@@ -125,4 +125,99 @@ def update_task_title(task_id):
     name = request.form.get('task_name')
     task.name = name
     db.session.commit()
+    return redirect(url_for('index'))
+
+
+@app.route('/priority_down/<int:task_id>', methods=['POST'])
+def priority_down(task_id):
+    """
+    Set for task priority (now_priority + 1)
+
+    :param task_id: id updated task
+    :return:
+    """
+    task_now = Task.query.filter_by(id=task_id).first()
+    next_task = Task.query.filter_by(priority=(task_now.priority+1), project_id=task_now.project_id).first()
+
+    if next_task and not next_task.status and not task_now.status:
+        task_now.priority += 1
+        db.session.commit()
+        next_task.priority -= 1
+        db.session.commit()
+
+    return redirect(url_for('index'))
+
+
+@app.route('/priority_up/<int:task_id>', methods=['POST'])
+def priority_up(task_id):
+    """
+    Set for task priority (now_priority - 1)
+
+    :param task_id: id updated task
+    :return:
+    """
+    task_now = Task.query.filter_by(id=task_id).first()
+    prev_task = Task.query.filter_by(priority=(task_now.priority-1), project_id=task_now.project_id).first()
+
+    if prev_task and not prev_task.status and not task_now.status:
+        task_now.priority -= 1
+        db.session.commit()
+        prev_task.priority += 1
+        db.session.commit()
+
+    return redirect(url_for('index'))
+
+
+@app.route('/change_status/<int:task_id>', methods=['POST'])
+def change_status(task_id):
+    task = Task.query.filter_by(id=task_id).first()
+    task.status = not task.status
+    db.session.commit()
+
+    priority = task.priority
+    if task.status:
+        tasks = Task.query.filter_by(project_id=task.project_id).all()
+
+        for update_task in tasks:
+            if update_task.priority > priority:
+                update_task.priority -= 1
+                db.session.commit()
+
+            task.priority = Task.query.filter_by(project_id=task.project_id).count()
+            db.session.commit()
+    else:
+        tasks = Task.query.filter_by(project_id=task.project_id, status=True).all()
+
+        for update_task in tasks:
+            if update_task.priority < priority:
+                update_task.priority += 1
+                db.session.commit()
+
+            task.priority = Task.query.filter_by(project_id=task.project_id).count() - len(tasks)
+            db.session.commit()
+
+    return redirect(url_for('index'))
+
+
+@app.route('/add_deadline/<int:task_id>', methods=['POST'])
+def add_deadline(task_id):
+    deadline = request.form.get('task_deadline')
+
+    deadline_date_format = datetime.strptime(deadline, '%Y-%m-%dT%H:%M')
+
+    task = Task.query.filter_by(id=task_id).first()
+    task.deadline = deadline_date_format
+
+    db.session.commit()
+
+    return redirect(url_for('index'))
+
+
+@app.route('/delete_deadline/<int:task_id>', methods=['POST'])
+def delete_deadline(task_id):
+    task = Task.query.filter_by(id=task_id).first()
+    task.deadline = None
+
+    db.session.commit()
+
     return redirect(url_for('index'))
