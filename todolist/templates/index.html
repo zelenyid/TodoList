@@ -5,6 +5,13 @@
 {% endblock %}
 
 {% block content %}
+    <nav class="navbar navbar-light bg-light justify-content-between">
+        <a class="navbar-brand">Hello, {{ current_user.username }}</a>
+
+        <div>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
     <div class="headers">
         <h1>SIMPLE TODO LISTS</h1>
         <p>FROM RUBY GARAGE</p>

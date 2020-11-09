@@ -1,21 +1,27 @@
 from datetime import datetime
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, flash
+from flask_login import login_user, current_user, logout_user, login_required
 
-from todolist.models import Project, Task
+from todolist.models import Project, Task, User
+from todolist.forms import RegistrationForm, LoginForm
+from todolist import app, db, bcrypt
 
-from todolist import app, db
 
-
+@app.route('/home')
 @app.route('/')
 def index():
     """
     Render start page
     :return: start page
     """
-    projects = Project.query.all()
-    return render_template('index.html', projects=projects, tasks=Task)
+    if current_user.is_authenticated:
+        projects = Project.query.filter_by(user_id=current_user.id).all()
+        return render_template('index.html', projects=projects, tasks=Task)
+    else:
+        return redirect(url_for('login'))
 
 
+@login_required
 @app.route('/add_project', methods=['POST'])
 def add_project():
     """
@@ -23,12 +29,13 @@ def add_project():
     :return: start page with new project
     """
     name = request.form.get('project')
-    new_project = Project(name=name)
+    new_project = Project(name=name, user_id=current_user.id)
     db.session.add(new_project)
     db.session.commit()
     return redirect(url_for('index'))
 
 
+@login_required
 @app.route('/update_project/<int:project_id>', methods=['POST'])
 def update_project(project_id):
     """
@@ -43,6 +50,7 @@ def update_project(project_id):
     return redirect(url_for('index'))
 
 
+@login_required
 @app.route('/delete_project/<int:project_id>', methods=['POST'])
 def delete_project(project_id):
     """
@@ -56,6 +64,7 @@ def delete_project(project_id):
     return redirect(url_for('index'))
 
 
+@login_required
 def update_priority_done(project_id):
     """
     Update priority done tasks (add +1 when we add new task) for not repeating one priority.
@@ -67,6 +76,7 @@ def update_priority_done(project_id):
         db.session.commit()
 
 
+@login_required
 def update_priority_after_delete(project_id, deleted_task):
     project_tasks = Task.query.filter_by(project_id=project_id)
 
@@ -76,6 +86,7 @@ def update_priority_after_delete(project_id, deleted_task):
             db.session.commit()
 
 
+@login_required
 @app.route('/add_task/<int:project_id>', methods=['POST'])
 def add_task(project_id):
     """
@@ -98,6 +109,7 @@ def add_task(project_id):
     return redirect(url_for('index'))
 
 
+@login_required
 @app.route('/delete_task/<int:task_id>', methods=['POST'])
 def delete_task(task_id):
     """
@@ -113,7 +125,7 @@ def delete_task(task_id):
     db.session.commit()
     return redirect(url_for('index'))
 
-
+@login_required
 @app.route('/update_task_title/<int:task_id>', methods=['POST'])
 def update_task_title(task_id):
     """
@@ -128,6 +140,7 @@ def update_task_title(task_id):
     return redirect(url_for('index'))
 
 
+@login_required
 @app.route('/priority_down/<int:task_id>', methods=['POST'])
 def priority_down(task_id):
     """
@@ -148,6 +161,7 @@ def priority_down(task_id):
     return redirect(url_for('index'))
 
 
+@login_required
 @app.route('/priority_up/<int:task_id>', methods=['POST'])
 def priority_up(task_id):
     """
@@ -168,6 +182,7 @@ def priority_up(task_id):
     return redirect(url_for('index'))
 
 
+@login_required
 @app.route('/change_status/<int:task_id>', methods=['POST'])
 def change_status(task_id):
     task = Task.query.filter_by(id=task_id).first()
@@ -199,6 +214,7 @@ def change_status(task_id):
     return redirect(url_for('index'))
 
 
+@login_required
 @app.route('/add_deadline/<int:task_id>', methods=['POST'])
 def add_deadline(task_id):
     deadline = request.form.get('task_deadline')
@@ -214,6 +230,7 @@ def add_deadline(task_id):
     return redirect(url_for('index'))
 
 
+@login_required
 @app.route('/delete_deadline/<int:task_id>', methods=['POST'])
 def delete_deadline(task_id):
     task = Task.query.filter_by(id=task_id).first()
@@ -221,4 +238,41 @@ def delete_deadline(task_id):
 
     db.session.commit()
 
+    return redirect(url_for('index'))
+
+
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        flash('Your account has been created! You are now able to log in', 'success')
+        return redirect(url_for('login'))
+    return render_template('register.html', title='Register', form=form)
+
+
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('index'))
+        else:
+            flash('Login Unsuccessful. Please check email and password', 'danger')
+    return render_template('login.html', title='Login', form=form)
+
+
+@app.route("/logout")
+def logout():
+    logout_user()
     return redirect(url_for('index'))
