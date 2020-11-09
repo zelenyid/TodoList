@@ -205,10 +205,11 @@ def add_deadline(task_id):
 
     deadline_date_format = datetime.strptime(deadline, '%Y-%m-%dT%H:%M')
 
-    task = Task.query.filter_by(id=task_id).first()
-    task.deadline = deadline_date_format
+    if deadline_date_format > datetime.now():
+        task = Task.query.filter_by(id=task_id).first()
+        task.deadline = deadline_date_format
 
-    db.session.commit()
+        db.session.commit()
 
     return redirect(url_for('index'))
 
