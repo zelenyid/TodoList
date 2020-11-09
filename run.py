@@ -1,5 +1,6 @@
-from todolist import app, db
+from todolist import create_app, db
 
+app = create_app()
 
 # Run app
 if __name__ == '__main__':

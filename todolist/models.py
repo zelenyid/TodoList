@@ -9,6 +9,9 @@ def load_user(user_id):
 
 
 class User(db.Model, UserMixin):
+    """
+    Model for user table
+    """
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -20,6 +23,9 @@ class User(db.Model, UserMixin):
 
 
 class Project(db.Model):
+    """
+    Model for project table
+    """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
     tasks = db.relationship('Task', backref='project', lazy=True)
@@ -30,6 +36,9 @@ class Project(db.Model):
 
 
 class Task(db.Model):
+    """
+    Model for task table
+    """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
     status = db.Column(db.Boolean, nullable=False, default=False)
